@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salva Learning</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        body {
+            /* Rimuoviamo l'immagine di sfondo dal body */
+            background-color: #fff;
+        }
+        
+        /* Stile per la barra di navigazione trasparente */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
+        }
+        
+        header.scrolled {
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #007bff;
+        }
+        
+        #home, #about {
+            position: relative;
+            padding-top: 0;
+            padding-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            overflow: visible;
+        }
+        
+        /* Overlay con il colore del brand solo nelle sezioni home e about - livello 1 (più basso) */
+        #home::before, #about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        #home::before {
+            background-color: rgba(220, 225, 254, 1);
+        }
+        
+        #about::before {
+            background-color: rgba(220, 225, 254, 0.5);
+        }
+        
+        /* Immagine dell'onda - livello 2 (intermedio) */
+        #home::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/onda.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 2;
+            opacity: 0.9;
+        }
+        
+        /* Rimuoviamo l'onda dalla sezione about poiché è già coperta da quella della home */
+        #about::after {
+            display: none;
+        }
+        
+        /* Overlay più leggero per le altre sezioni */
+        .section:not(#home):not(#about) {
+            position: relative;
+        }
+        
+        .section:not(#home):not(#about)::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95); /* Sfondo bianco quasi opaco */
+            z-index: 0;
+        }
+        
+        .section .container {
+            position: relative;
+            z-index: 2; /* Posiziona sopra l'overlay */
+        }
+        
+        #home .container, #about .container {
+            position: relative;
+            z-index: 3; /* Aumentato a 3 per essere sopra l'onda */
+            height: 70vh; /* Occupa tutta l'altezza della viewport */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        #home h1, #about h3 {
+            color: #333;
+            text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
+            font-size: 5rem;
+            margin-bottom: 40px;
+            text-align: left; /* Allineamento a sinistra */
+            font-family: 'Gotham', 'Poppins', 'Montserrat', sans-serif;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        
+        #about h3 {
+            font-size: 2.5rem; /* Ridotto significativamente */
+            color: #007bff; /* Cambiato in blu per corrispondere al colore dei numeri */
+            margin-bottom: 30px;
+        }
+
+        #about p {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* Aggiunto ombra al testo per migliorare la leggibilità */
+        }
+        
+        .hero-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            height: 70vh;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 1100px;
+            height: auto;
+            margin-bottom: 5px;
+            object-fit: contain;
+            transform: scale(1);
+            margin-top: 5vh;
+        }
+
+        .hero-buttons {
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        #home .container {
+            justify-content: center;
+        }
+        
+        /* Logo nella navbar */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 65px;
+            width: auto;
+            margin: 5px 0;
+        }
+
+        .minimal-wave {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, #dce1fe 25%, transparent 25%),
+                        linear-gradient(-45deg, #dce1fe 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #dce1fe 75%),
+                        linear-gradient(-45deg, transparent 75%, #dce1fe 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: transparent;
+            opacity: 0.7;
+            animation: wave 20s linear infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            }
+            100% {
+                background-position: 40px 0, 40px 10px, 50px -10px, 30px 0px;
+            }
+        }
+
+        .image {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Animazioni di entrata */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .fade-in-delay {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 0.3s;
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideInLeft 1s ease forwards;
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            animation: slideInRight 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .wave-image {
+            width: 100%;
+            height: auto;
+            max-width: 500px;
+            opacity: 0.8;
+        }
+
+        #about {
+            position: relative;
+            padding-top: 50px;
+            padding-bottom: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: auto;
+            overflow: visible;
+            background-color: rgba(220, 225, 254, 0.5);
+        }
+
+        #about .container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 1rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 3;
+            height: auto;
+        }
+
+        #about .content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(3px);
+        }
+
+        #about .text {
+            flex: 1;
+        }
+
+        #about .image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .team-section {
+            margin-top: 1rem;
+            text-align: center;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(3px);
+        }
+
+        .team-title {
+            font-size: 2.5rem;
+            color: #007bff;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .team-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 100%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .team-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            flex: 1;
+            text-align: left;
+        }
+
+        .team-info h3 {
+            font-size: 1.4rem;
+            color: #333;
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        .team-role {
+            font-size: 1.4rem;
+            color: #007bff;
+            font-weight: 400;
+            margin: 0 0 1.5rem 0;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .team-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .team-social a {
+            color: #007bff;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .team-social a:hover {
+            color: #0056b3;
+        }
+
+        #home {
+            position: relative;
+            padding-top: 0;
+            padding-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            overflow: visible;
+        }
+
+        #home .container {
+            position: relative;
+            z-index: 3;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .hero-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            height: 70vh;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 1100px;
+            height: auto;
+            margin-bottom: 5px;
+            object-fit: contain;
+            transform: scale(1);
+            margin-top: 5vh;
+        }
+
+        .hero-buttons {
+            margin-top: 0;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .primary-btn {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+            background-color: #0056b3;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .course-content h3 {
+            font-size: 2rem;
+            color: #007bff;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .course-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        #cta {
+            display: none;
+        }
+
+        footer {
+            position: relative;
+            background-color: rgba(220, 225, 254, 0.3);
+            padding: 200px 0 2rem;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/onda2.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 1;
+            z-index: 1;
+        }
+
+        footer .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+            padding: 2rem;
+        }
+
+        .cta-content {
+            text-align: center;
+            padding: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: #333 !important;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+        }
+
+        .footer-info p {
+            color: #333;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-links-column h4 {
+            color: #007bff;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-links-column ul li a {
+            color: #333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 123, 255, 0.1);
+        }
+
+        .copyright p {
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        #services {
+            position: relative;
+            background-color: rgba(220, 225, 254, 0.3);
+            overflow: visible;
+            padding: 4rem 0;
+        }
+
+        #services::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/onda-viola.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        #services .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        #services h2 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 100%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        #team {
+            position: relative;
+            background-color: rgba(220, 225, 254, 0.1);
+            overflow: visible;
+            padding: 4rem 0;
+        }
+
+        #team::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/onda-viola.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 1;
+            z-index: 1;
+        }
+
+        #team .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .team-section {
+            margin-top: 1rem;
+            text-align: center;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .team-title {
+            font-size: 2.5rem;
+            color: #007bff;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .team-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2);
+        }
+
+        .team-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(0, 123, 255, 0.2);
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-info h3 {
+            font-size: 1.8rem;
+            color: #333;
+            margin: 0 0 0.8rem 0;
+            font-weight: 700;
+        }
+
+        .team-role {
+            font-size: 1.4rem;
+            color: #007bff;
+            font-weight: 400;
+            margin: 0 0 1.5rem 0;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .team-social a {
+            color: #007bff;
+            font-size: 1.8rem;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+        .team-social a:hover {
+            color: #0056b3;
+            transform: translateY(-3px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h2 {
+            color: #007bff;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .modal-body {
+            color: #333;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .modal-body h3 {
+            color: #007bff;
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .modal-body ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            color: #007bff;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #0056b3;
+        }
+
+        /* Stili per le animazioni di scroll */
+        .scroll-animation {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-animation.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-animation.slide-left {
+            transform: translateX(-100px);
+        }
+
+        .scroll-animation.slide-right {
+            transform: translateX(100px);
+        }
+
+        .scroll-animation.slide-left.fade-in,
+        .scroll-animation.slide-right.fade-in {
+            transform: translateX(0);
+        }
+
+        .scroll-animation.delay-200 {
+            transition-delay: 0.2s;
+        }
+
+        .scroll-animation.delay-400 {
+            transition-delay: 0.4s;
+        }
+
+        .scroll-animation.delay-600 {
+            transition-delay: 0.6s;
+        }
+
+        /* Stile per la freccia di scroll */
+        .scroll-arrow {
+            position: fixed;
+            right: 30px;
+            bottom: 30px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 123, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: bounce 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-arrow:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+
+        .scroll-arrow i {
+            color: white;
+            font-size: 20px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Nascondi la freccia quando si scorre oltre la sezione home */
+        .scroll-arrow.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Stile per il selettore di lingua */
+        .language-selector {
+            display: flex;
+            align-items: center;
+            margin-left: 2rem;
+        }
+
+        .language-btn {
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .language-btn:hover {
+            color: #007bff;
+        }
+
+        .language-btn.active {
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        .language-divider {
+            color: #333;
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with navigation -->
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="assets/logo salva learning.png" alt="Salva Learning Logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" data-i18n="nav.home">Home</a></li>
+                <li><a href="#about" data-i18n="nav.about">About</a></li>
+                <li><a href="#team" data-i18n="nav.team">Team</a></li>
+                <li><a href="#services" data-i18n="nav.services">Services</a></li>
+                <li><a href="#footer" data-i18n="nav.contact">Contact</a></li>
+                <li class="language-selector">
+                    <button class="language-btn active" data-lang="en">EN</button>
+                    <span class="language-divider">|</span>
+                    <button class="language-btn" data-lang="it">IT</button>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Home/Hero Section -->
+    <section id="home" class="section">
+        <div class="container">
+            <div class="hero-content">
+                <img src="assets/Intro text.png" alt="Data Driven Learning Experiences" class="hero-image fade-in">
+                <div class="hero-buttons fade-in-delay">
+                    <a href="mailto:info@salvalearning.com" class="btn primary-btn">Contact Us</a>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="content">
+                <div class="image slide-in-left">
+                    <img src="assets/What we stand for.png" alt="What we stand for" class="wave-image">
+                </div>
+                <div class="text">
+                    <p class="slide-in-right"><strong>We exist to provide impactful learning experiences where inspiration and data go hand in hand to provoke change.</strong></p>
+                    <p class="slide-in-right"><strong>We believe in the power of stories and their alchemical ability to catalyse profound shifts within individuals.</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="section">
+        <div class="container">
+            <div class="team-section">
+                <h2 class="team-title">MEET THE TEAM</h2>
+                <div class="team-cards">
+                    <div class="team-card">
+                        <div class="team-image">
+                            <img src="assets/matteo.png" alt="Matteo">
+                        </div>
+                        <div class="team-info">
+                            <h3>Matteo Gabrielli</h3>
+                            <p class="team-role">L&D Consultant<br>Co-Founder</p>
+                            <div class="team-social">
+                                <a href="https://www.linkedin.com/in/gabriellimatteo/" target="_blank">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                                <a href="mailto:matteo@salvalearning.com">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-image">
+                            <img src="assets/gabriel.png" alt="Gabriel">
+                        </div>
+                        <div class="team-info">
+                            <h3>Gabriel Wistisen</h3>
+                            <p class="team-role">L&D Consultant<br>Co-Founder</p>
+                            <div class="team-social">
+                                <a href="https://www.linkedin.com/in/gabriel-wistisen/" target="_blank">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                                <a href="mailto:gabriel@salvalearning.com">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section (previously Courses) -->
+    <section id="services" class="section">
+        <div class="container">
+            <h2 style="color: #007bff;">WHAT WE DO</h2>
+            <div class="courses-categories">
+                <button class="category-btn active" data-category="instructional-design">Instructional Design</button>
+                <button class="category-btn" data-category="consultancy">Consultancy</button>
+                <button class="category-btn" data-category="experiences">Experiences</button>
+            </div>
+            <div class="courses-grid">
+                <div class="course-card" id="instructional-design">
+                    <div class="course-content">
+                        <h3>🚀 IMPACTFUL, DATA-DRIVEN INSTRUCTIONAL DESIGN</h3>
+                        <p>We don't just create learning programs—we craft transformative experiences.<br><br>
+                        Using data, behavioral science, and immersive methodologies, we design synchronous, asynchronous, and blended learning solutions that drive engagement and real-world results.<br><br>
+                        Whether online or in-person, our learning experiences are built to stick, scale, and succeed.</p>
+                    </div>
+                </div>
+                <div class="course-card" id="consultancy" style="display: none;">
+                    <div class="course-content">
+                        <h3>🎯 AD HOC LEARNING CONSULTANCY</h3>
+                        <p>One-size-fits-all learning? Not here. Effective learning is dynamic, personalized, and shaped around the learner's needs—not off-the-shelf solutions that fall flat.<br><br>
+                        Whether you need to refine an existing program, design a fresh approach, or tackle a unique learning challenge, we bring strategic insights and innovative solutions that fit your organization's DNA.</p>
+                    </div>
+                </div>
+                <div class="course-card" id="experiences" style="display: none;">
+                    <div class="course-content">
+                        <h3>🔥 TEAM BUILDING EXPERIENCES</h3>
+                        <p>Forget trust falls and tired icebreakers. Our team-building experiences push boundaries and challenge teams in unconventional, high-energy settings.<br><br>
+                        Think cooking experiments that ignite creative problem-solving or high-speed race car challenges that teach precision, trust, and communication.<br><br>
+                        We create experiences that don't just bring teams together—they transform the way they work and connect.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section id="cta" class="section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Let's make something happen, let's talk.</h2>
+                <a href="mailto:info@salvalearning.com" class="btn primary-btn" style="margin-top: 2rem;">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Let's make something happen, let's talk.</h2>
+                <a href="mailto:info@salvalearning.com" class="btn primary-btn" style="margin-top: 2rem;">Contact Us</a>
+            </div>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">
+                        <img src="assets/logo salva learning.png" alt="Salva Learning Logo">
+                    </div>
+                    <p>Kamer van Koophandel | 93333552</p>
+                    <p>BTW Nummer | NL005015127B67</p>
+                    <div class="social-links" style="margin-top: 1rem;">
+                        <a href="https://www.linkedin.com/company/salvalearning" target="_blank" style="font-size: 1.8rem; color: #007bff; transition: color 0.3s ease;">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-links-column">
+                        <h4>Quick Links</h4>
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#team">Team</a></li>
+                            <li><a href="#services">Services</a></li>
+                            <li><a href="#footer">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links-column">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#privacy-policy">Privacy Policy</a></li>
+                            <li><a href="#terms-of-service">Terms of Service</a></li>
+                            <li><a href="#cookie-policy">Cookie Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Salva Learning. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('privacyModal')">&times;</span>
+            <div class="modal-header">
+                <h2>Privacy Policy</h2>
+                <p>Last Updated: March 7, 2025</p>
+            </div>
+            <div class="modal-body">
+                <p>Salva Learning ("we," "us," or "our") respects your privacy and is committed to protecting your personal data. This Privacy Policy outlines how we collect, use, and protect your information in compliance with the General Data Protection Regulation (GDPR) and Dutch privacy laws.</p>
+                
+                <h3>1. Information We Collect</h3>
+                <p>We collect the following types of personal data:</p>
+                <ul>
+                    <li>Identification Data: Name, email address, phone number, etc.</li>
+                    <li>Technical Data: IP address, browser type, operating system.</li>
+                    <li>Usage Data: Information about how you use our website.</li>
+                    <li>Cookies and Tracking Data: As described in our Cookie Policy.</li>
+                </ul>
+
+                <h3>2. How We Use Your Information</h3>
+                <p>We use your personal data for the following purposes:</p>
+                <ul>
+                    <li>To provide and maintain our services.</li>
+                    <li>To process transactions and send necessary communications.</li>
+                    <li>To improve our website and user experience.</li>
+                    <li>To comply with legal obligations.</li>
+                    <li>To send marketing communications (if you have given consent).</li>
+                </ul>
+
+                <h3>3. Legal Basis for Processing Data</h3>
+                <p>Under the GDPR, we process personal data based on:</p>
+                <ul>
+                    <li>Contractual necessity (e.g., fulfilling a service or order).</li>
+                    <li>Legitimate interests (e.g., website security and fraud prevention).</li>
+                    <li>Legal obligations (e.g., tax compliance).</li>
+                    <li>Consent (for non-essential cookies and marketing emails).</li>
+                </ul>
+
+                <h3>4. Data Retention</h3>
+                <p>We retain personal data only as long as necessary to fulfill the purposes stated above or as required by law.</p>
+
+                <h3>5. Data Sharing and Transfers</h3>
+                <p>We do not sell or rent personal data. However, we may share your data with:</p>
+                <ul>
+                    <li>Service providers that assist in website operations.</li>
+                    <li>Authorities if required by law.</li>
+                    <li>International transfers (outside the EEA) only occur with adequate safeguards.</li>
+                </ul>
+
+                <h3>6. Your Rights</h3>
+                <p>You have the following rights under the GDPR:</p>
+                <ul>
+                    <li>Right to access, rectify, or delete your data.</li>
+                    <li>Right to restrict or object to processing.</li>
+                    <li>Right to data portability.</li>
+                    <li>Right to withdraw consent at any time.</li>
+                </ul>
+                <p>To exercise your rights, contact us at info@salvalearning.com.</p>
+
+                <h3>7. Security Measures</h3>
+                <p>We implement strict security measures to protect your data from unauthorized access or breaches.</p>
+
+                <h3>8. Contact Us</h3>
+                <p>For any questions regarding this Privacy Policy, contact us at: info@salvalearning.com</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('termsModal')">&times;</span>
+            <div class="modal-header">
+                <h2>Terms of Service</h2>
+                <p>Last Updated: March 7, 2025</p>
+            </div>
+            <div class="modal-body">
+                <h3>1. Introduction</h3>
+                <p>These Terms of Service ("Terms") govern your use of our website and services. By accessing our website, you agree to comply with these Terms.</p>
+
+                <h3>2. User Responsibilities</h3>
+                <ul>
+                    <li>You must be at least 18 years old to use our services.</li>
+                    <li>You must not use our website for unlawful purposes.</li>
+                    <li>You are responsible for maintaining the security of your account.</li>
+                </ul>
+
+                <h3>3. Intellectual Property</h3>
+                <p>All content on this website, including text, images, and trademarks, is owned by Salva Learning and is protected by intellectual property laws.</p>
+
+                <h3>4. Limitation of Liability</h3>
+                <p>We are not liable for any damages arising from your use of our website, except as required by law.</p>
+
+                <h3>5. Governing Law</h3>
+                <p>These Terms are governed by the laws of the Netherlands and the EU regulations.</p>
+
+                <h3>6. Changes to These Terms</h3>
+                <p>We reserve the right to update these Terms at any time. Continued use of our website indicates acceptance of the changes.</p>
+
+                <h3>7. Contact Information</h3>
+                <p>For inquiries about these Terms, contact us at info@salvalearning.com.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="cookieModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('cookieModal')">&times;</span>
+            <div class="modal-header">
+                <h2>Cookie Policy</h2>
+                <p>Last Updated: March 7, 2025</p>
+            </div>
+            <div class="modal-body">
+                <p>This Cookie Policy explains how Salva Learning uses cookies and similar technologies on our website in compliance with the EU ePrivacy Directive and GDPR.</p>
+
+                <h3>1. What Are Cookies?</h3>
+                <p>Cookies are small files stored on your device that enhance website functionality and user experience.</p>
+
+                <h3>2. Types of Cookies We Use</h3>
+                <ul>
+                    <li>Essential Cookies: Required for website operation.</li>
+                    <li>Analytical Cookies: Help us analyze site usage (Google Analytics, etc.).</li>
+                    <li>Marketing Cookies: Used for advertising and personalized content.</li>
+                </ul>
+
+                <h3>3. Managing Your Cookie Preferences</h3>
+                <ul>
+                    <li>You can manage cookie settings through our cookie banner.</li>
+                    <li>You can also disable cookies in your browser settings.</li>
+                </ul>
+
+                <h3>4. Third-Party Cookies</h3>
+                <p>We may use third-party services that set their own cookies. These services have their own privacy policies.</p>
+
+                <h3>5. Updates to This Policy</h3>
+                <p>We may update this Cookie Policy periodically. Any changes will be posted on this page.</p>
+
+                <h3>6. Contact Information</h3>
+                <p>For any questions, contact us at info@salvalearning.com.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            const courseCards = document.querySelectorAll('.course-card');
+
+            // Gestione dei pulsanti delle categorie
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    courseCards.forEach(card => card.style.display = 'none');
+                    const category = this.getAttribute('data-category');
+                    document.getElementById(category).style.display = 'block';
+                });
+            });
+
+            // Gestione dello scroll smooth per il link Team
+            document.querySelector('a[href="#team"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                const teamSection = document.getElementById('team');
+                teamSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            // Configurazione Intersection Observer per le animazioni
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                        observer.unobserve(entry.target); // Smette di osservare dopo l'animazione
+                    }
+                });
+            }, observerOptions);
+
+            // Aggiungi classe e osservatore a tutti gli elementi da animare
+            function setupAnimations() {
+                // Team section
+                document.querySelector('.team-title').classList.add('scroll-animation');
+                document.querySelectorAll('.team-card').forEach((card, index) => {
+                    card.classList.add('scroll-animation', 'slide-left', `delay-${index * 200}`);
+                });
+
+                // Services section
+                document.querySelector('#services h2').classList.add('scroll-animation');
+                document.querySelectorAll('.course-card').forEach((card, index) => {
+                    card.classList.add('scroll-animation', 'slide-right', `delay-${index * 200}`);
+                });
+
+                // About section
+                document.querySelectorAll('#about p').forEach((p, index) => {
+                    p.classList.add('scroll-animation', index % 2 ? 'slide-right' : 'slide-left', `delay-${index * 200}`);
+                });
+
+                // Footer
+                document.querySelector('.cta-content').classList.add('scroll-animation');
+                document.querySelectorAll('.footer-links-column').forEach((column, index) => {
+                    column.classList.add('scroll-animation', 'slide-right', `delay-${index * 200}`);
+                });
+
+                // Osserva tutti gli elementi con la classe scroll-animation
+                document.querySelectorAll('.scroll-animation').forEach(element => {
+                    observer.observe(element);
+                });
+            }
+
+            // Inizializza le animazioni
+            setupAnimations();
+
+            // Gestione della freccia di scroll
+            const scrollArrow = document.querySelector('.scroll-arrow');
+            const sections = ['home', 'about', 'team', 'services', 'footer'];
+            
+            // Funzione per trovare la sezione corrente e la prossima
+            function getCurrentAndNextSection() {
+                const scrollPosition = window.pageYOffset + (window.innerHeight / 2);
+                let currentSection = sections[0];
+                let nextSection = sections[1];
+
+                for (let i = 0; i < sections.length; i++) {
+                    const section = document.getElementById(sections[i]);
+                    const sectionTop = section.offsetTop;
+                    const sectionBottom = sectionTop + section.offsetHeight;
+
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                        currentSection = sections[i];
+                        nextSection = sections[i + 1];
+                        break;
+                    }
+                }
+
+                return { current: currentSection, next: nextSection };
+            }
+
+            // Funzione per gestire il click sulla freccia
+            scrollArrow.addEventListener('click', () => {
+                const { next } = getCurrentAndNextSection();
+                if (next) {
+                    const nextSectionElement = document.getElementById(next);
+                    nextSectionElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+
+            // Aggiorna la visibilità della freccia durante lo scroll
+            window.addEventListener('scroll', () => {
+                const { current, next } = getCurrentAndNextSection();
+                
+                // Nascondi la freccia solo quando siamo nel footer
+                if (current === 'footer' || !next) {
+                    scrollArrow.classList.add('hidden');
+                } else {
+                    scrollArrow.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Modal functionality
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+            document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+            document.body.style.overflow = "auto"; // Restore scrolling
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+        }
+
+        // Update the legal links to open modals
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... existing DOMContentLoaded code ...
+
+            // Add event listeners for legal links
+            document.querySelector('a[href="#privacy-policy"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                openModal('privacyModal');
+            });
+
+            document.querySelector('a[href="#terms-of-service"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                openModal('termsModal');
+            });
+
+            document.querySelector('a[href="#cookie-policy"]').addEventListener('click', function(e) {
+                e.preventDefault();
+                openModal('cookieModal');
+            });
+        });
+
+        // Dizionario delle traduzioni
+        const translations = {
+            en: {
+                "nav.home": "Home",
+                "nav.about": "About",
+                "nav.team": "Team",
+                "nav.services": "Services",
+                "nav.contact": "Contact",
+                "hero.contact": "Contact Us",
+                "about.text1": "We exist to provide impactful learning experiences where inspiration and data go hand in hand to provoke change.",
+                "about.text2": "We believe in the power of stories and their alchemical ability to catalyse profound shifts within individuals.",
+                "team.title": "MEET THE TEAM",
+                "services.title": "WHAT WE DO",
+                "services.tab1": "Instructional Design",
+                "services.tab2": "Consultancy",
+                "services.tab3": "Experiences",
+                "services.card1.title": "🚀 IMPACTFUL, DATA-DRIVEN INSTRUCTIONAL DESIGN",
+                "services.card1.text": "We don't just create learning programs—we craft transformative experiences.<br><br>Using data, behavioral science, and immersive methodologies, we design synchronous, asynchronous, and blended learning solutions that drive engagement and real-world results.<br><br>Whether online or in-person, our learning experiences are built to stick, scale, and succeed.",
+                "services.card2.title": "🎯 AD HOC LEARNING CONSULTANCY",
+                "services.card2.text": "One-size-fits-all learning? Not here. Effective learning is dynamic, personalized, and shaped around the learner's needs—not off-the-shelf solutions that fall flat.<br><br>Whether you need to refine an existing program, design a fresh approach, or tackle a unique learning challenge, we bring strategic insights and innovative solutions that fit your organization's DNA.",
+                "services.card3.title": "🔥 TEAM BUILDING EXPERIENCES",
+                "services.card3.text": "Forget trust falls and tired icebreakers. Our team-building experiences push boundaries and challenge teams in unconventional, high-energy settings.<br><br>Think cooking experiments that ignite creative problem-solving or high-speed race car challenges that teach precision, trust, and communication.<br><br>We create experiences that don't just bring teams together—they transform the way they work and connect.",
+                "cta.text": "Let's make something happen, let's talk.",
+                "footer.quicklinks": "Quick Links",
+                "footer.legal": "Legal",
+                "footer.privacy": "Privacy Policy",
+                "footer.terms": "Terms of Service",
+                "footer.cookies": "Cookie Policy"
+            },
+            it: {
+                "nav.home": "Home",
+                "nav.about": "Chi Siamo",
+                "nav.team": "Team",
+                "nav.services": "Servizi",
+                "nav.contact": "Contatti",
+                "hero.contact": "Contattaci",
+                "about.text1": "Esistiamo per offrire esperienze di apprendimento significative, dove ispirazione e dati vanno di pari passo per suscitare il cambiamento.",
+                "about.text2": "Crediamo nel potere delle storie e nella loro straordinaria capacità di catalizzare trasformazioni profonde nelle persone.",
+                "team.title": "IL NOSTRO TEAM",
+                "services.title": "COSA FACCIAMO",
+                "services.tab1": "Instructional Design",
+                "services.tab2": "Consulenza",
+                "services.tab3": "Esperienze",
+                "services.card1.title": "🚀 INSTRUCTIONAL DESIGN BASATO SUI DATI",
+                "services.card1.text": "Non ci limitiamo a creare programmi di apprendimento: creiamo esperienze trasformative.<br><br>Utilizzando dati, scienze comportamentali e metodologie immersive, progettiamo soluzioni di apprendimento sincrone, asincrone e miste che favoriscono il coinvolgimento e risultati concreti.<br><br>Che sia online o in presenza, le nostre esperienze di apprendimento sono costruite per durare, scalare e avere successo.",
+                "services.card2.title": "🎯 CONSULENZA PERSONALIZZATA",
+                "services.card2.text": "Soluzioni standard per tutti? Non qui. L'apprendimento efficace è dinamico, personalizzato e modellato sulle esigenze del discente, non soluzioni preconfezionate che cadono nel vuoto.<br><br>Che tu abbia bisogno di perfezionare un programma esistente, progettare un nuovo approccio o affrontare una sfida di apprendimento unica, portiamo intuizioni strategiche e soluzioni innovative che si adattano al DNA della tua organizzazione.",
+                "services.card3.title": "🔥 ESPERIENZE DI TEAM BUILDING",
+                "services.card3.text": "Dimentica gli esercizi di fiducia e le attività di gruppo tradizionali. Le nostre esperienze di team building spingono i confini e sfidano i team in ambienti non convenzionali e ad alta energia.<br><br>Pensa a esperimenti di cucina che accendono la risoluzione creativa dei problemi o sfide automobilistiche che insegnano precisione, fiducia e comunicazione.<br><br>Creiamo esperienze che non si limitano a unire i team: trasformano il modo in cui lavorano e si connettono.",
+                "cta.text": "Facciamo accadere qualcosa, parliamone.",
+                "footer.quicklinks": "Link Rapidi",
+                "footer.legal": "Legale",
+                "footer.privacy": "Privacy Policy",
+                "footer.terms": "Termini di Servizio",
+                "footer.cookies": "Cookie Policy"
+            }
+        };
+
+        // Funzione per cambiare la lingua
+        function changeLanguage(lang) {
+            // Aggiorna i pulsanti della lingua
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            // Aggiorna tutti gli elementi con attributo data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    if (element.tagName === 'P' || element.tagName === 'H2' || element.tagName === 'H3') {
+                        element.innerHTML = translations[lang][key];
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // Aggiorna elementi specifici
+            document.querySelector('.hero-buttons .primary-btn').textContent = translations[lang]['hero.contact'];
+            document.querySelector('.cta-content h2').textContent = translations[lang]['cta.text'];
+            
+            // Aggiorna le card dei servizi
+            document.querySelector('#instructional-design .course-content h3').innerHTML = translations[lang]['services.card1.title'];
+            document.querySelector('#instructional-design .course-content p').innerHTML = translations[lang]['services.card1.text'];
+            document.querySelector('#consultancy .course-content h3').innerHTML = translations[lang]['services.card2.title'];
+            document.querySelector('#consultancy .course-content p').innerHTML = translations[lang]['services.card2.text'];
+            document.querySelector('#experiences .course-content h3').innerHTML = translations[lang]['services.card3.title'];
+            document.querySelector('#experiences .course-content p').innerHTML = translations[lang]['services.card3.text'];
+
+            // Aggiorna i testi dell'about
+            document.querySelectorAll('#about .text p').forEach((p, index) => {
+                p.innerHTML = `<strong>${translations[lang][`about.text${index + 1}`]}</strong>`;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... existing DOMContentLoaded code ...
+
+            // Aggiungi event listener per i pulsanti della lingua
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const lang = btn.dataset.lang;
+                    changeLanguage(lang);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
